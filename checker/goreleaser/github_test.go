@@ -2,6 +2,7 @@ package goreleaser
 
 import (
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"github.com/webzyno/goup"
 	"io"
 	"os"
@@ -11,6 +12,7 @@ import (
 	"time"
 )
 
+//goland:noinspection GoBoolExpressions
 func TestGitHubChecker_GetLatestRelease(t *testing.T) {
 	config := &GitHubConfig{
 		Owner: "webzyno",
@@ -19,10 +21,11 @@ func TestGitHubChecker_GetLatestRelease(t *testing.T) {
 	}
 	checker := NewGitHubChecker(config)
 	release, err := checker.GetLatestUpdate()
-	assert.NoError(t, err)
+	require.NoError(t, err)
 
 	// Asset release
 	releaseTime, _ := time.Parse(time.RFC3339, "2023-10-07T14:09:25Z")
+	require.NotNil(t, release)
 	assert.Equal(t, release.Version, "v0.1.0")
 	assert.Equal(t, release.Time, releaseTime)
 	assert.Equal(t, release.OS, runtime.GOOS)
@@ -39,9 +42,10 @@ func TestGitHubChecker_GetLatestRelease(t *testing.T) {
 	}
 }
 
+//goland:noinspection GoUnhandledErrorResult
 func assertDownloader(t *testing.T, downloader goup.Downloader, name string) {
 	reader, err := downloader.Download()
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	defer reader.Close()
 
 	content, _ := os.ReadFile(path.Join("test", name))
