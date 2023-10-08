@@ -18,7 +18,7 @@ func TestGitHubChecker_GetLatestRelease(t *testing.T) {
 		Token: os.Getenv("GITHUB_TOKEN"),
 	}
 	checker := NewGitHubChecker(config)
-	release, err := checker.GetLatestRelease()
+	release, err := checker.GetLatestUpdate()
 	assert.NoError(t, err)
 
 	// Asset release

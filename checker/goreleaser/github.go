@@ -64,7 +64,7 @@ func NewGitHubChecker(config *GitHubConfig) goup.Checker {
 	}
 }
 
-func (g *gitHubChecker) GetLatestRelease() (*goup.Release, error) {
+func (g *gitHubChecker) GetLatestUpdate() (*goup.Update, error) {
 	// Validate configuration
 	if g.config.Owner == "" || g.config.Repo == "" {
 		return nil, os.ErrInvalid
@@ -117,20 +117,18 @@ func (g *gitHubChecker) GetLatestRelease() (*goup.Release, error) {
 		}
 	}
 
-	return &goup.Release{
-		Update: goup.Update{
-			GetFile: goup.DownloadWithResty(
-				fmt.Sprintf("/repos/%s/%s/releases/assets/%d", g.config.Owner, g.config.Repo, asset.Id),
-				g.client,
-			),
-			Version:  latestRelease.TagName,
-			Checksum: checksum,
-			Time:     latestRelease.PublishedAt,
-			Size:     uint64(asset.Size),
-			OS:       runtime.GOOS,
-			Arch:     runtime.GOARCH,
-			Extras:   latestRelease,
-		},
+	return &goup.Update{
+		GetFile: goup.DownloadWithResty(
+			fmt.Sprintf("/repos/%s/%s/releases/assets/%d", g.config.Owner, g.config.Repo, asset.Id),
+			g.client,
+		),
+		Version:  latestRelease.TagName,
+		Checksum: checksum,
+		Time:     latestRelease.PublishedAt,
+		Size:     uint64(asset.Size),
+		OS:       runtime.GOOS,
+		Arch:     runtime.GOARCH,
+		Extras:   latestRelease,
 	}, nil
 }
 
