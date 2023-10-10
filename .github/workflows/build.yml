@@ -12,7 +12,8 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
       - name: Set up Go
         uses: actions/setup-go@v4
@@ -20,7 +21,9 @@ jobs:
           go-version: '1.21.2'
 
       - name: Build
-        run: go build -v ./...
+        run: go build github.com/webzyno/goup
 
       - name: Test
         run: go test -v ./...
+        env:
+          GITHUB_TOKEN: ${{ secrets.GOUP_TEST_TOKEN }}
