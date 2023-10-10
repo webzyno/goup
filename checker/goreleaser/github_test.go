@@ -48,7 +48,7 @@ func assertDownloader(t *testing.T, downloader goup.Downloader, name string) {
 	require.NoError(t, err)
 	defer reader.Close()
 
-	content, _ := os.ReadFile(path.Join("test", name))
+	content, _ := os.ReadFile(path.Join("..", "..", "test", name))
 	downloaderContent, err := io.ReadAll(reader)
 	assert.Equal(t, content, downloaderContent)
 }

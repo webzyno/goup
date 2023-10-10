@@ -24,7 +24,7 @@ type ApplyConfig struct {
 	OldPath string
 }
 
-func Apply(update Update, config *ApplyConfig) error {
+func Apply(update *Update, config *ApplyConfig) error {
 	// Download new update
 	data, err := update.GetFile.Download()
 	if err != nil {
