@@ -2,6 +2,7 @@ package goup
 
 import (
 	"crypto"
+	"github.com/minio/selfupdate"
 	"os"
 )
 
@@ -24,5 +25,25 @@ type ApplyConfig struct {
 }
 
 func Apply(update Update, config *ApplyConfig) error {
-	panic("not implemented")
+	// Download new update
+	data, err := update.GetFile.Download()
+	if err != nil {
+		return err
+	}
+	defer data.Close()
+
+	if err := selfupdate.Apply(data, selfupdate.Options{
+		TargetPath:  config.Path,
+		TargetMode:  config.Mode,
+		Checksum:    update.Checksum,
+		Hash:        config.Hash,
+		OldSavePath: config.OldPath,
+	}); err != nil {
+		if rollbackErr := selfupdate.RollbackError(err); rollbackErr != nil {
+			return rollbackErr
+		}
+		return err
+	}
+
+	return nil
 }
