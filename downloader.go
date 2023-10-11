@@ -3,6 +3,7 @@ package goup
 import (
 	"github.com/go-resty/resty/v2"
 	"io"
+	"os"
 )
 
 type Downloader interface {
@@ -31,4 +32,16 @@ func (r *restyDownloader) Download() (io.ReadCloser, error) {
 		return nil, err
 	}
 	return resp.RawBody(), nil
+}
+
+type fileDownloader struct {
+	path string
+}
+
+func FromFile(path string) Downloader {
+	return &fileDownloader{path: path}
+}
+
+func (f *fileDownloader) Download() (io.ReadCloser, error) {
+	return os.Open(f.path)
 }

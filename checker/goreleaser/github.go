@@ -2,6 +2,7 @@ package goreleaser
 
 import (
 	"bufio"
+	"encoding/hex"
 	"fmt"
 	"github.com/go-resty/resty/v2"
 	"github.com/webzyno/goup"
@@ -140,7 +141,7 @@ func (g *gitHubChecker) parseChecksumFile(body io.ReadCloser, assetName string) 
 		line := scanner.Text()
 		words := strings.Split(line, "  ")
 		if len(words) == 2 && words[1] == assetName {
-			return []byte(words[0]), nil
+			return hex.DecodeString(words[0])
 		}
 	}
 	return nil, scanner.Err()

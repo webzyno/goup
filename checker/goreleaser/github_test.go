@@ -1,6 +1,7 @@
 package goreleaser
 
 import (
+	"encoding/hex"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/webzyno/goup"
@@ -32,12 +33,14 @@ func TestGitHubChecker_GetLatestRelease(t *testing.T) {
 	assert.Equal(t, release.Arch, runtime.GOARCH)
 
 	if runtime.GOOS == "darwin" && runtime.GOARCH == "arm64" {
+		checksum, _ := hex.DecodeString("3edda6fd54d12fc5c7e615100f54d3930035bb8e7b82a6d9ea1e51c335a9f675")
 		assert.Equal(t, release.Size, uint64(1432994))
-		assert.Equal(t, release.Checksum, []byte("3edda6fd54d12fc5c7e615100f54d3930035bb8e7b82a6d9ea1e51c335a9f675"))
+		assert.Equal(t, release.Checksum, checksum)
 		assertDownloader(t, release.GetFile, "goup-test_0.1.0_darwin_arm64")
 	} else if runtime.GOOS == "linux" && runtime.GOARCH == "amd64" {
+		checksum, _ := hex.DecodeString("9f58cb7e7c064629d0a4830206d34be1daf595570522ba477903727639d0ce90")
 		assert.Equal(t, release.Size, uint64(1253376))
-		assert.Equal(t, release.Checksum, []byte("9f58cb7e7c064629d0a4830206d34be1daf595570522ba477903727639d0ce90"))
+		assert.Equal(t, release.Checksum, checksum)
 		assertDownloader(t, release.GetFile, "goup-test_0.1.0_linux_amd64")
 	}
 }
@@ -48,7 +51,7 @@ func assertDownloader(t *testing.T, downloader goup.Downloader, name string) {
 	require.NoError(t, err)
 	defer reader.Close()
 
-	content, _ := os.ReadFile(path.Join("test", name))
+	content, _ := os.ReadFile(path.Join("..", "..", "test", name))
 	downloaderContent, err := io.ReadAll(reader)
 	assert.Equal(t, content, downloaderContent)
 }
